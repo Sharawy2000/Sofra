@@ -37,6 +37,13 @@ return [
             'throw' => false,
         ],
 
+        'app' => [
+            'driver' => 'local',
+            'root' => app_path('/'),
+            'serve' => true,
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

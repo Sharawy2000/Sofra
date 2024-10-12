@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
+        'guard' => env('AUTH_GUARD', 'user'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -36,9 +36,17 @@ return [
     */
 
     'guards' => [
-        'web' => [
+        'user' => [
             'driver' => 'session',
             'provider' => 'users',
+        ],
+        'client' => [
+            'driver' => 'sanctum',
+            'provider' => 'clients',
+        ],
+        'restaurant' => [
+            'driver' => 'sanctum',
+            'provider' => 'restaurants',
         ],
     ],
 
@@ -63,6 +71,14 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
+        ],
+        'clients' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\Client::class),
+        ],
+        'restaurants' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\Restaurant::class),
         ],
 
         // 'users' => [
