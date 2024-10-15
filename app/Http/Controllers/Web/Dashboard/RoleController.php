@@ -76,9 +76,8 @@ class RoleController extends Controller
     {
         $request->validate([
             'name'=>'nullable|string',
-            'permission_list'=>'nullable|array'
+            'permissionsList'=>'nullable|array'
         ]);
-        
         $role=$this->roleService->update($request,$id);
         $this->roleService->syncPermissions($request,$role);
 

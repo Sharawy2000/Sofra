@@ -18,7 +18,7 @@ class RoleService extends BaseService
         }
     }
     public function syncPermissions($request,$role){
-        $this->roleRepository->sync($role,'permissions',$request->permissions);
+        $this->roleRepository->sync($role,'permissions',$request->permissionsList);
 
     }
 }

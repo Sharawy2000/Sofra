@@ -10,7 +10,7 @@ interface BaseRepositoryInterface
     public function remove($id);
     public function attach($model,$relation,$id,$data=[]);
     public function detach($model,$relation);
-    public function sync($model,$relation,$id,$data=[]);
+    public function sync($model,$relation,$id);
 
 
 

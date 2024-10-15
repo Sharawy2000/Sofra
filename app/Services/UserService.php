@@ -65,11 +65,11 @@ class UserService extends BaseService
 
     public function attachRoles($request,$user){
         if($request->role_list != null){
-            $this->userRepository->attach($user,$request->role_list);
+            $this->userRepository->attach($user,'roles',$request->role_list);
         }
     }
     public function syncRoles($request,$user){
-        $this->userRepository->sync($user,$request->role_list);
+        $this->userRepository->sync($user,'roles',$request->role_list);
 
     }
 

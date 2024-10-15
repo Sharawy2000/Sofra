@@ -69,7 +69,7 @@
                     <hr>
                     @foreach($permission->all() as $permission)
                       <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $permission->id }}" {{ $role->permissions->contains($permission->id)? 'checked' : '' }}>
+                        <input class="form-check-input" type="checkbox" name="permissionsList[]" value="{{ $permission->id }}" {{ $role->permissions->contains($permission->id)? 'checked' : '' }}>
                         {{ $permission->name }}
                       </div>
                     @endforeach

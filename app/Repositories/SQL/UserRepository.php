@@ -16,14 +16,4 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface{
         return $this->user->where('email',$data)->first();
     }
 
-    // public function
-
-    public function attach($user,$role_list){
-        $user->roles()->detach();
-        $user->roles()->attach($role_list);
-    }
-    public function sync($user,$role_list){
-        $user->roles()->sync($role_list);
-    }
-
 }

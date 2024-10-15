@@ -35,8 +35,8 @@ class BaseRepository implements BaseRepositoryInterface
     public function detach($model,$relation){
         $model->$relation()->detach();
     }
-    public function sync($model,$relation,$id,$data=[]){
-        $model->$relation()->sync($id,$data);
+    public function sync($model,$relation,$id){
+        $model->$relation()->sync($id);
     }
 
 
