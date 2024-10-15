@@ -58,11 +58,15 @@
                       <input type="text" name="name" class="form-control" id="exampleInputEmail1">
                     </div>
                     <label for="exampleInputEmail1">{{ __('messages.permissions') }}</label>
+                    
                     <div class="form-group" id="checkbox-container">
                       <div class="form-check">
-                        <input class="form-check-input" id="selectAll" type="checkbox">
+                        <input id="selectAll" type="checkbox">
                           {{ __('messages.select_all') }}
                       </div>
+                      <hr>
+                      <br>
+                      <hr>
                       @foreach($permission->all() as $permission)
                         <div class="form-check">
                           <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $permission->id }}">

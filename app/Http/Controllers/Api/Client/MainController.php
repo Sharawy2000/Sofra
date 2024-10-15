@@ -21,6 +21,13 @@ class MainController extends Controller
         return $this->responseJson('الطلبات الخاصة بك',$orders);
 
     }
+    public function validOffers()
+    {
+        $offers = $this->clientService->allValidOffers();
+
+        return $this->responseJson('جديد العروض',$offers);
+        
+    }
     public function myNotifications(){
         $notifications = $this->clientService->notifications();
         return $this->responseJson('الاشعارات',$notifications);
@@ -45,10 +52,18 @@ class MainController extends Controller
         
         $request->validate([
             'comment'=>'nullable|string',
-            'rate'=>'nullable|integer',
+            'rate'=>'nullable|integer|in:1,2,3,4,5',
         ]);
-        
+
         $comment=$this->clientService->review($request,$restaurant_id);
+
+        if(isset($comment['errorReview'])){
+            return $this->responseJson('من فضلك قم بإضافة تعليق أو تقييم',null,400);
+        }
+
+        if(isset($comment['errorRestaurant'])){
+            return $this->responseJson('لا يوجد مطعم',null,400);
+        }
 
         return $this->responseJson("تم اضافة تقييمك بنجاح", $comment->load(['client','restaurant']));
 

@@ -61,6 +61,6 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         ->latest()
         ->paginate(5);
     }
- 
+
 
 }

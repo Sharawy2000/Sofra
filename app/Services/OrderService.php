@@ -1,7 +1,8 @@
-<?php 
+<?php
 namespace App\Services;
 
 use App\Enums\OrderStatus;
+use App\Models\Client;
 use App\Repositories\Interface\ClientRepositoryInterface;
 use App\Repositories\Interface\TokenRepositoryInterface;
 use App\Repositories\Interface\NotificationRepositoryInterface;
@@ -27,7 +28,7 @@ class OrderService extends BaseService
         ClientRepositoryInterface $clientRepository,
         RestaurantRepositoryInterface $restaurantRepository,
         TokenRepositoryInterface $fcmTokenRepository){
-            
+
         parent::__construct($orderRepository);
 
         $this->orderRepository = $orderRepository;
@@ -39,13 +40,62 @@ class OrderService extends BaseService
 
     }
 
+    private function changeStatus($id,$orderStatus,$status){
+
+        $order = $this->get($id);
+
+        if($order->status != $orderStatus){
+            return false;
+        }
+
+        $target = auth()->user();
+
+        $this->orderRepository->orderStatus($status,$order);
+        
+        if($target instanceof Client){
+
+            $notification=[
+                'title'=>'Order '.$order->id.' '.$order->status->name,
+                'body'=>$order->client->name.' '.$order->status->name." ".'the order',
+                'is_seen'=> false
+            ];
+    
+            $restaurant=$this->restaurantRepository->find($order->restaurant_id);
+    
+            $this->notificationRepository->add($notification,$restaurant);
+    
+            $token = $this->fcmTokenRepository->get($restaurant);
+    
+        }else{
+
+            $notification=[
+                'title'=>$order->status->name == OrderStatus::DELIVERED->name ? "Order $order->id" : 'Order '.$order->id.' '.$order->status->name,
+                'body'=>$order->status->name == OrderStatus::DELIVERED->name ? 'Thank you for choosing our service, have a nice day :)' : $order->restaurant->name.' '.$order->status->name." ".'the order',
+                'is_seen'=> false
+            ];
+
+            $client=$this->clientRepository->find($order->client_id);
+
+            $this->notificationRepository->add($notification,$client);
+
+            $token = $this->fcmTokenRepository->get($client);
+
+        }
+        if($token){
+            $title=$notification['title'];
+            $body=$notification['body'];
+            $orderID=[
+                'order_id'=>$order->id,
+            ];
+            $this->notifyByFirebase($title,$body,$token,$orderID);
+        }
+        
+        return $order;
+    }
+
     public function placeOrder($request){
 
-        $client = auth()->guard('client')->user();
-
-        if (!$client) {
-            return $this->responseJson('Client not found', null, 401);
-        }
+        $client = auth()->user();
 
         $commission_rate = 10;
         $total_price = 0;
@@ -53,20 +103,20 @@ class OrderService extends BaseService
         $first_product= $this->productRepository->find($request->products[0]);
 
         if (!$first_product) {
-            return $this->responseJson('لا يوجد هذا المنتج', null, 404);
+            return ['errorProduct'=>true];
         }
 
         $restaurant = $first_product->restaurant;
 
         if (!$restaurant) {
-            return $this->responseJson('لا يوجد مطعم', null, 404);
+            return ['errorRestaurant'=>true];
         }
 
         foreach ($request->products as $index => $product_id) {
             $product = $this->productRepository->find($product_id);
 
-            $quantity = $request->quantities[$index] ?? 1; 
-            // if product has an valid offer
+            $quantity = $request->quantities[$index] ?? 1;
+
             if($product->price_in_offer){
 
                 $total_price += $product->price_in_offer * $quantity;
@@ -77,6 +127,7 @@ class OrderService extends BaseService
             }
         }
         $total_price=$total_price + $restaurant->delivery_fees;
+
         $commission_amount = $total_price * $commission_rate / 100;
 
         $request->merge([
@@ -89,7 +140,8 @@ class OrderService extends BaseService
 
         $order=$this->orderRepository->store($request->all());
 
-        //  attactment process 
+        //  attachment process
+        
         foreach ($request->products as $index => $product_id) {
             $product=$this->productRepository->find($product_id);
             $quantity = $request->quantities[$index] ?? 1;
@@ -99,11 +151,11 @@ class OrderService extends BaseService
                 'price_at_order' => $product->price * $quantity,
                 'special_order' => $request->special_order ?? null,
             ];
-            $this->orderRepository->attachProducts($order, $product, $dat);
+            $this->orderRepository->attach($order, 'products', $product->id,$dat);
         }
-        //----------------------------------------------------------------
 
         // Send and store notification
+
         $notification=[
             'title'=>'New Order #'.$order->id,
             'body'=>'You have an order from '.$order->client->name,
@@ -120,89 +172,43 @@ class OrderService extends BaseService
             $data=[
                 'order_id'=>$order->id,
             ];
-        }
 
-        $this->notifyByFirebase($title,$body,$token,$data);
+            $this->notifyByFirebase($title,$body,$token,$data);
 
-        //----------------------------------------------------------------
-
-        return $order;
-    }
-    public function updateOrder($data,$id){
-
-        $order=$this->orderRepository->find($id);
-
-        if(!$order){
-            return $this->responseJson('لا يوجد طلب', null, 401);
-        }
-
-        $client = auth()->guard('client')->user();
-
-        $restaurant = auth()->guard('restaurant')->user();
-
-        if ($client){
-            if ($client->id != $order->client_id){
-                return $this->responseJson('لا توجد معلومات لهذا الطلب', null, 401);
-            }
-            $this->orderRepository->orderStatus($data['status'],$order);
-
-            $notification=[
-                'title'=>'New Order #'.$order->id,
-                'body'=>'You have an order from '.$order->client->name,
-                'is_seen'=> false
-            ];
-
-            $restaurant=$this->restaurantRepository->find($order->restaurant_id);
-
-            $this->notificationRepository->add($notification,$restaurant);
-
-            $token = $this->fcmTokenRepository->get($restaurant);
-
-
-            if($token){
-                $title=$notification['title'];
-                $body=$notification['body'];
-                $orderID=[
-                    'order_id'=>$order->id,
-                ];
-            }
-            $this->notifyByFirebase($title,$body,$token,$orderID);
-        }
-
-        if ($restaurant){
-            if ($restaurant->id != $order->restaurant_id){
-                return $this->responseJson('لا توجد معلومات لهذا الطلب', null, 401);
-            }
-
-            $this->orderRepository->orderStatus($data['status'],$order);
-
-            $notification=[
-                'title'=>'Order '.$order->id.' '.$order->status->name,
-                'body'=>'Restaurant '.$order->restaurant->name.' has been '.$order->status->name. ' order '.$order->id,
-                'is_seen'=> false
-            ];
-
-            $client=$this->clientRepository->find($order->client_id);
-
-            $this->notificationRepository->add($notification,$client);
-
-            $token = $this->fcmTokenRepository->get($client);
-
-            if($token){
-                $title=$notification['title'];
-                $body=$notification['body'];
-                $orderID=[
-                    'order_id'=>$order->id,
-                ];
-            }
-            $this->notifyByFirebase($title,$body,$token,$orderID);
         }
 
         return $order;
     }
+    // method accept , reject , etc ,
+    // logic pending  , method prv
 
-    public function getFilteredOrders($search){
+    public function accept($id){
         
+        return $this->changeStatus($id,OrderStatus::PENDING,OrderStatus::ACCEPTED);
+    }
+    public function reject($id){
+        
+        return $this->changeStatus($id,OrderStatus::PENDING,OrderStatus::REJECTED);
+
+    }
+    public function received($id){
+        
+        return $this->changeStatus($id,OrderStatus::ACCEPTED,OrderStatus::RECEIVED);
+
+    }
+    public function cancelled($id){
+        
+        return $this->changeStatus($id,OrderStatus::ACCEPTED,OrderStatus::CANCELLED);
+
+    }
+    public function delivered($id){
+        
+        return $this->changeStatus($id,OrderStatus::RECEIVED,OrderStatus::DELIVERED);
+
+    }
+    
+    public function getFilteredOrders($search){
+
         if($search != null){
 
             return $this->orderRepository->filter($search);

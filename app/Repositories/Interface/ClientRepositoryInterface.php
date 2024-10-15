@@ -10,6 +10,8 @@ interface ClientRepositoryInterface
     public function removeToken($id);
     public function removeAllTokens($id);
     public function filter($search);
+    public function validateResetCode($data);
+
 
     // public function getFcmToken($module);
     // public function addFcmToken($data,$module);

@@ -61,12 +61,11 @@ class RestaurantService extends BaseService
 
         if(!$restaurant || !Hash::check($data['password'],$restaurant->password)){
 
-            // return $this->responseJson('البيانات التي ادخلتها غير صحيحة',null,400);
-            return abort(401,'البيانات التي ادخلتها غير صحيحة');
+            return ['errorInfo'=>true];
         }
 
         if($restaurant->is_activated == 0){
-            return abort(401,'تم إيقاف حسابك ، برجاء التواصل معنا');
+            return ['errorActivate'=>true];
         }
 
         $token=$this->restaurantRepository->createToken($restaurant);
@@ -76,15 +75,7 @@ class RestaurantService extends BaseService
     }
     
     public function profile(){
-
-        $restaurant=Auth::guard('restaurant')->user();
-
-        if(!$restaurant){
-            // return $this->responseJson('لا يوجد هذا الحساب',null,401);
-            return abort(401,'لا توجد بيانات');
-
-        }
-        return $restaurant;
+        return auth()->user();
     }
 
     public function updateProfile($restaurant,$request){

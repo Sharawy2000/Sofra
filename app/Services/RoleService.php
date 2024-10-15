@@ -12,13 +12,13 @@ class RoleService extends BaseService
     }
 
     public function attachPermissions($request,$role){
-        if($request->permission_list != null){
-            $this->roleRepository->attach($role,$request->permission_list);
+        if($request->permissions != null){
+            $this->roleRepository->attach($role,'permissions',$request->permissions);
 
         }
     }
     public function syncPermissions($request,$role){
-        $this->roleRepository->sync($role,$request->permission_list);
+        $this->roleRepository->sync($role,'permissions',$request->permissions);
 
     }
 }

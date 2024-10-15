@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Restaurant;
 
-use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Services\RestaurantService;
 use App\Traits\Helper;

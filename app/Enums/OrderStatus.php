@@ -9,4 +9,5 @@ enum OrderStatus:int
     case REJECTED = 2;
     case DELIVERED = 3;
     case CANCELLED = 4;
+    case RECEIVED = 5;
 }

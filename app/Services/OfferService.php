@@ -15,17 +15,9 @@ class OfferService extends BaseService
     }
 
     public function restaurant(){
-        $restaurant=auth()->guard('restaurant')->user();
+        $restaurant=auth()->user();
         
-        if(!$restaurant){
-            abort(401, 'لا يوجد بيانات');
-        }
         return $restaurant;
-    }
-    public function allValidOffers(){
-
-        return $this->offerRepository->validOffers();
-
     }
 
     public function placeOffer($request,$isApi=true){
@@ -44,8 +36,6 @@ class OfferService extends BaseService
 
     }
     public function updateOffer($request, $id){
-
-        $this->restaurant();
 
         $offer=$this->offerRepository->update($request->except('image'),$id);
 

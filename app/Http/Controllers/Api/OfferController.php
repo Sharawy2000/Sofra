@@ -19,9 +19,9 @@ class OfferController extends Controller
      */
     public function index()
     {
-        $offers = $this->offerService->allValidOffers();
+        $offers = $this->offerService->all();
 
-        return $this->responseJson('جديد العروض',$offers);
+        return $this->responseJson('العروض',$offers);
         
     }
 

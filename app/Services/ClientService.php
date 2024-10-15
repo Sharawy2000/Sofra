@@ -5,11 +5,11 @@ namespace App\Services;
 use App\Repositories\Interface\ClientRepositoryInterface;
 use App\Repositories\Interface\CommentRepositoryInterface;
 use App\Repositories\Interface\NotificationRepositoryInterface;
+use App\Repositories\Interface\OfferRepositoryInterface;
 use App\Repositories\Interface\OrderRepositoryInterface;
 use App\Repositories\Interface\RestaurantRepositoryInterface;
 use App\Repositories\Interface\ProductRepositoryInterface;
 use App\Traits\Helper;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class ClientService extends BaseService
@@ -21,13 +21,15 @@ class ClientService extends BaseService
     protected $productRepository;
     protected $orderRepository;
     protected $notificationRepository;
+    protected $offerRepository;
     public function __construct(
         ClientRepositoryInterface $clientRepository,
         CommentRepositoryInterface $commentRepository,
         RestaurantRepositoryInterface $restaurantRepository,
         ProductRepositoryInterface $productRepository,
         OrderRepositoryInterface $orderRepository,
-        NotificationRepositoryInterface $notificationRepository
+        NotificationRepositoryInterface $notificationRepository,
+        OfferRepositoryInterface $offerRepository,
     )
     {
         parent::__construct($clientRepository);
@@ -37,26 +39,18 @@ class ClientService extends BaseService
         $this->productRepository = $productRepository;
         $this->orderRepository = $orderRepository;
         $this->notificationRepository = $notificationRepository;
+        $this->offerRepository = $offerRepository;
     }
 
     public function login($data){
 
         $client = $this->clientRepository->validateLogin($data);
 
-        // if(!$client){
-        //     return abort(401,'البيانات التي أدخلتها غير صحيحة');
-        // }
-        // if(!Hash::check($data['password'],$client->password)){        
-        //     return abort(401,'كلمة المرور غير صحيحة');
-
-        // }
         if(!$client || !Hash::check($data['password'],$client->password)){
-
-            // return $this->responseJson('البيانات التي ادخلتها غير صحيحة',null,400);
-            return abort(401,'البيانات التي ادخلتها غير صحيحة');
+            return['errorInfo'=>true];
         }
         if($client->is_activated == 0){
-            return abort(401,'تم إيقاف حسابك ، برجاء التواصل معنا');
+            return['errorActivate'=>true];
         }
 
         $token=$this->clientRepository->createToken($client);
@@ -66,7 +60,7 @@ class ClientService extends BaseService
     }
 
     public function register($data){
-        
+
         $client = $this->clientRepository->store($data);
 
         $token=$this->clientRepository->createToken($client);
@@ -77,14 +71,9 @@ class ClientService extends BaseService
 
     public function profile(){
 
-        $client=Auth::guard('client')->user();
+        $client=auth()->user();
 
-        if(!$client){
-            return abort(401,'لا توجد بيانات');
-
-        }
-
-        return $client;  
+        return $client;
 
     }
     public function updateProfile($data){
@@ -102,15 +91,19 @@ class ClientService extends BaseService
         $this->clientRepository->removeToken($client);
 
     }
-    
+
     public function allOrders(){
 
         $client=$this->profile();
 
         return $this->orderRepository->orders($client);
 
-
     }
+
+    public function allValidOffers(){
+        return $this->offerRepository->validOffers();
+    }
+
     public function notifications(){
 
         $client=$this->profile();
@@ -137,28 +130,25 @@ class ClientService extends BaseService
     public function review($request,$restaurant_id){
 
         if($request->comment== null && $request->rate == null){
-            return abort(401,'من فضلك قم بإضافة تعليق أو تقييم');
-
-            
+            return['errorReview'=>true];
         }
-        
+
         $client=$this->profile();
 
         $restaurant=$this->restaurantRepository->find($restaurant_id);
 
         if(!$restaurant){
-            return abort(401,'لا توجد بيانات');
-
+            return['errorRestaurant'=>true];
         }
 
         if($request->has('rate')){
-            
+
             $this->restaurantRepository->overallRateCalc($restaurant);
-            
+
         }
 
         $request->merge(['restaurant_id'=>$restaurant->id]);
-        
+
         return $this->clientRepository->addReview($request->all(),$client);
 
     }

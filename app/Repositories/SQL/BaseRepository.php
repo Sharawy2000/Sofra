@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Repositories\SQL;
 
 use App\Enums\OrderStatus;
@@ -8,7 +8,6 @@ use App\Repositories\Interface\BaseRepositoryInterface;
 class BaseRepository implements BaseRepositoryInterface
 {
     protected $model;
-
     public function __construct(Model $model){
         $this->model = $model;
     }
@@ -30,5 +29,15 @@ class BaseRepository implements BaseRepositoryInterface
         $module=$this->find($id);
         $module->delete();
     }
-    
+    public function attach($model,$relation,$id,$data=[]){
+        $model->$relation()->attach($id,$data);
+    }
+    public function detach($model,$relation){
+        $model->$relation()->detach();
+    }
+    public function sync($model,$relation,$id,$data=[]){
+        $model->$relation()->sync($id,$data);
+    }
+
+
 }

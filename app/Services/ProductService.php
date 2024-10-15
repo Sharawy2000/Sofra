@@ -15,14 +15,7 @@ class ProductService extends BaseService
     }
 
     public function getRestaurant(){
-
-        $restaurant=auth()->guard('restaurant')->user();
-
-        if(!$restaurant){
-            abort(401, 'لا يوجد بيانات');
-            
-        }
-        return $restaurant;
+        return auth()->user();
     }
 
     public function placeProduct($request){
@@ -42,8 +35,6 @@ class ProductService extends BaseService
     }
 
     public function updateProduct($request, $id){
-
-        $this->getRestaurant();
 
         $product=$this->productRepository->update($request->except('image'),$id);
 

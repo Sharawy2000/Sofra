@@ -9,11 +9,14 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
 {
     protected $client;
     public function __construct(Client $client){
-        parent::__construct($client); 
+        parent::__construct($client);
         $this->client = $client;
     }
     public function validateLogin($data){
         return $this->client->where('phone',$data['phone'])->first();
+    }
+    public function validateResetCode($data){
+        return $this->client->where('reset_code',$data)->first();
     }
     public function createToken($client){
         return $client->createToken('Personal Access Token',['*'],now()->addMonth())->plainTextToken;
@@ -44,8 +47,8 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
         ->orWhere('email','like','%' . $search . '%')
         ->latest()
         ->paginate(5);
-        
+
     }
-    
+
 
 }

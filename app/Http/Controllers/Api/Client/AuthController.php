@@ -22,6 +22,14 @@ class AuthController extends Controller
         $data = $request->validated(); 
         
         $result = $this->clientService->login($data);
+        if(isset($result['errorInfo'])){
+
+            return $this->responseJson('البيانات التي ادخلتها غير صحيحة',null,401);
+        }
+        if(isset($result['errorActivate'])){
+
+            return $this->responseJson('تم إيقاف حسابك ، برجاء التواصل معنا',null,401);
+        }
         
         return $this->responseJson('تم تسجيل الدخول بنجاح',[
             'token'=>$result['token'],

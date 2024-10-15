@@ -1,6 +1,21 @@
 @extends('layouts.layout')
 @section('body')
 @inject('roles','Spatie\Permission\Models\Role' )
+@section('styles')
+<style>
+  #checkbox-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  #checkbox-container label {
+      display: flex;
+      align-items: center;
+  }
+
+</style>
+@endsection
 <div class="wrapper">
 
     <!-- Content Wrapper. Contains page content -->
@@ -52,28 +67,19 @@
                       <label for="exampleInputEmail1">{{ __('messages.password_confirmation') }}</label>
                       <input type="password" name="password_confirmation" class="form-control" id="exampleInputEmail1" >
                     </div>
-                    {{-- <div class="form-group">
-                        <label for="role_id">{{ __('messages.roles') }}</label>
-                        <select name="role_list[]" class="form-control" id="form-select" multiple="multiple" dataplaceholder="Select a Role">
-                            @foreach($roles->all() as $role)
-                                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                            @endforeach
-                        </select> 
-                    </div> --}}
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">{{ __('messages.roles') }}</label><hr>
-
-                      <div class="form-check" >
-                        <input class="form-check-input" id="selectAll" type="checkbox">
+                    <label for="exampleInputEmail1">{{ __('messages.roles') }}</label>
+                    <div class="form-group" id="checkbox-container">
+                      <div class="form-check">
+                        <input id="selectAll" type="checkbox">
                           {{ __('messages.select_all') }}
                       </div>
+                      <hr>
                       <br>
+                      <hr>
                       @foreach($roles->all() as $role)
-                        <div class="form-check" style="display: inline-block">
-                          <input type="checkbox" name="role_list[]" value="{{ $role->id }}" >
-                          <label for="flexCheckDefault">
-                            {{ $role->name }}
-                          </label>  
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="role_list[]" value="{{ $role->id }}">
+                          {{ $role->name }}
                         </div>
                       @endforeach
                     </div>
@@ -89,10 +95,5 @@
 </div>
 @endsection
 @section('scripts')
-{{-- <script>
-    $(document).ready(function() {
-        $('#form-select').select2();
-    });
-</script> --}}
 @include('inc.select-all')
 @endsection

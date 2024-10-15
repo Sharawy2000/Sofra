@@ -37,6 +37,12 @@ class AuthController extends Controller
 
           $result = $this->restaurantService->login($data);
 
+          if(isset($result['errorInfo'])){
+               return $this->responseJson('البيانات التي ادخلتها غير صحيحة',null,400);
+          }
+          if(isset($result['errorActivate'])){
+               return $this->responseJson('تم إيقاف حسابك ، برجاء التواصل معنا',null,400);
+          }
           return $this->responseJson('تم تسجيل الدخول بنجاح',[
                'token'=>$result['token'],
                'token_type'=>'Bearer',
@@ -45,6 +51,7 @@ class AuthController extends Controller
 
     }
     public function profile(){
+
           $restaurant = $this->restaurantService->profile();
 
           return $this->responseJson('البيانات الخاصة بك',$restaurant);
@@ -73,7 +80,6 @@ class AuthController extends Controller
           $restaurant=$this->restaurantService->updateProfile($restaurant,$request);
 
           return $this->responseJson('تم تحديث بياناتك بنجاح',$restaurant);
-
 
      }
 

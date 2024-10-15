@@ -57,19 +57,20 @@
                       <label for="exampleInputEmail1">{{ __('messages.name') }}</label>
                       <input type="text" name="name" class="form-control" id="exampleInputEmail1" value="{{ $role->name }}">
                   </div>
-                  <div class="form-group">
-                    <label for="exampleInputEmail1">{{ __('messages.permissions') }}</label><hr>
-                    <div class="form-check" >
-                      <input class="form-check-input" id="selectAll" type="checkbox" >
+                  <label for="exampleInputEmail1">{{ __('messages.permissions') }}</label>
+
+                  <div class="form-group" id="checkbox-container">
+                    <div class="form-check">
+                      <input id="selectAll" type="checkbox">
                         {{ __('messages.select_all') }}
                     </div>
+                    <hr>
                     <br>
+                    <hr>
                     @foreach($permission->all() as $permission)
-                      <div class="form-check" style="display: inline-block">
-                        <input type="checkbox" name="permission_list[]" value="{{ $permission->id }}" {{ $role->permissions->contains($permission->id)? 'checked' : '' }} >
-                        <label for="flexCheckDefault">
-                          {{ $permission->name }}
-                        </label>  
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $permission->id }}" {{ $role->permissions->contains($permission->id)? 'checked' : '' }}>
+                        {{ $permission->name }}
                       </div>
                     @endforeach
                   </div>

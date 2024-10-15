@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Repositories\SQL;
 
 use App\Enums\OrderStatus;
@@ -18,6 +18,9 @@ class RestaurantRepository extends BaseRepository implements RestaurantRepositor
     public function validateLogin($data){
         return $this->restaurant->where('phone',$data['phone'])->first();
     }
+    public function validateResetCode($data){
+        return $this->restaurant->where('reset_code',$data)->first();
+    }
     public function createToken($restaurant){
         return $restaurant->createToken('Personal Access Token',['*'],now()->addMonth())->plainTextToken;
     }
@@ -30,10 +33,11 @@ class RestaurantRepository extends BaseRepository implements RestaurantRepositor
     public function overallRateCalc($restaurant){
         $rates=$restaurant->comments()->pluck('rate')->sum();
         $reviews = $restaurant->comments()->whereNotNull('rate')->count();
-        $restaurant->overall_rate = round($rates/$reviews);
+        $reviews == 0 ? $restaurant->overall_rate = 0 : $restaurant->overall_rate = round($rates / $reviews);
         $restaurant->save();
     }
     public function myComissionsCalc($restaurant){
+
         $completedOrderPrices=$restaurant->orders()->where('status',OrderStatus::DELIVERED)->pluck('total_price')->sum();
         $completedOrderCommissions=$restaurant->orders()->where('status',OrderStatus::DELIVERED)->pluck('commission_amount')->sum();
         $payedAmount=$restaurant->payments()->pluck('amount_paid')->sum();
@@ -64,21 +68,7 @@ class RestaurantRepository extends BaseRepository implements RestaurantRepositor
         ->orWhere('email','like','%' . $search . '%')
         ->latest()
         ->paginate(5);
-        
+
     }
-    // public function getMyProducts($restaurant){
-    //     return $restaurant->products()->latest()->paginate(3);
-    // }
-    // public function getMyOffers($restaurant){
-    //     return $restaurant->offers()->latest()->paginate(3);
-    // }
-    // public function getMyReview($restaurant){
-    //     return $restaurant->comments()->latest()->paginate(3);
-    // }
-    // public function myCurrentOrders($restaurant){
-    //     return $restaurant->orders()
-    //     ->where('status',OrderStatus::ACCEPTED)
-    //     ->latest()
-    //     ->paginate(5);
-    // }
+
 }

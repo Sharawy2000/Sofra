@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'change-lang'=>'App\Http\Middleware\ChangeLang',
             'auto-check-permission'=>'App\Http\Middleware\AutoCheckPermission',
+            'is-client'=>'App\Http\Middleware\IsClient',
+            'is-restaurant'=>'App\Http\Middleware\IsRestaurant',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

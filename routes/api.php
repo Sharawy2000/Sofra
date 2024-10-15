@@ -62,47 +62,72 @@ Route::group([
     
     Route::group([
         'prefix'=>'client',
-        'middleware'=>'auth:sanctum'
+        'middleware'=>['auth:sanctum','is-client']
     ],function(){
-        Route::get('/profile',[ClientAuthController::class,'profile']);
-        Route::patch('/update-profile',[ClientAuthController::class,'update']);
-        Route::post('/logout',[ClientAuthController::class,'logout']);
 
-        Route::get('/my-orders',[ClientMainController::class,'myOrders']);
-        Route::get('/my-notifications',[ClientMainController::class,'myNotifications']);
-        Route::get('/current-orders',[ClientMainController::class,'currentOrders']);
-        Route::get('/previous-orders',[ClientMainController::class,'previousOrders']);
-        Route::post('/add-review/{restaurant_id}',[ClientMainController::class,'addReview']);
+        Route::controller(ClientAuthController::class)->group(function(){
+            Route::get('/profile','profile');
+            Route::patch('/update-profile','update');
+            Route::post('/logout','logout');
+        });
+
+        Route::controller(ClientMainController::class)->group(function(){
+            Route::get('/my-orders','myOrders');
+            Route::get('/valid-offers','validOffers');
+            Route::get('/my-notifications','myNotifications');
+            Route::get('/current-orders','currentOrders');
+            Route::get('/previous-orders','previousOrders');
+            Route::post('/add-review/{restaurant_id}','addReview');
+        });
+
+        Route::group([
+            'prefix'=>'order',
+            'controller'=>OrderController::class
+        ],function(){
+            Route::get('/{id}/received','receivedOrder');
+            Route::get('/{id}/cancelled','cancelledOrder');
+        });
 
     });
     
     Route::group([
         'prefix'=>'restaurant',
-        'middleware'=>'auth:sanctum'
+        'middleware'=>['auth:sanctum','is-restaurant']
     ],function(){
-        Route::get('/profile',[RestaurantAuthController::class,'profile']);
-        Route::patch('/update-profile',[RestaurantAuthController::class,'update']);
-        Route::post('/logout',[RestaurantAuthController::class,'logout']);
 
-        Route::get('/my-products',[RestaurantMainController::class,'myProducts']);
-        Route::get('/my-orders',[RestaurantMainController::class,'myOrders']);
-        Route::get('/my-reviews',[RestaurantMainController::class,'myReviews']);
-        Route::get('/my-notifications',[RestaurantMainController::class,'myNotifications']);
+        Route::controller(RestaurantAuthController::class)->group(function(){
+            Route::get('/profile','profile');
+            Route::patch('/update-profile','update');
+            Route::post('/logout','logout');
+        });
 
-        Route::get('/new-orders',[RestaurantMainController::class,'newOrders']);
-        Route::get('/current-orders',[RestaurantMainController::class,'currentOrders']);
-        Route::get('/previous-orders',[RestaurantMainController::class,'previousOrders']);
+        Route::controller(RestaurantMainController::class)->group(function(){
+            Route::get('/my-orders','myOrders');
+            Route::get('/my-offers','myOffers');
+            Route::get('/my-products','myProducts');
+            Route::get('/my-reviews','myReviews');
+            Route::get('/my-notifications','myNotifications');
+            Route::get('/new-orders','newOrders');
+            Route::get('/current-orders','currentOrders');
+            Route::get('/previous-orders','previousOrders');
+            Route::get('/my-comissions','myCommissions');
+        });
 
-        Route::get('my-comissions',[RestaurantMainController::class,'myCommissions']);
-
+        Route::group([
+            'prefix'=>'order',
+            'controller'=>OrderController::class
+        ],function(){
+            Route::get('/{id}/accepted','acceptOrder');
+            Route::get('/{id}/rejected','rejectOrder');
+            Route::get('/{id}/delivered','deliveredOrder');
+        });
 
     });
 
     Route::name('api.')->group(function(){
-        Route::resource('products',ProductsController::class)->middleware('auth:sanctum');
-        Route::resource('offers',OfferController::class)->middleware('auth:sanctum');
-        Route::resource('orders',OrderController::class)->middleware('auth:sanctum');
-
+        Route::resource('products',ProductsController::class)->middleware(['auth:sanctum','is-restaurant']);
+        Route::resource('offers',OfferController::class)->middleware(['auth:sanctum','is-restaurant']);
+        Route::resource('orders',OrderController::class)->middleware(['auth:sanctum','is-client']);
     });
 
 });
