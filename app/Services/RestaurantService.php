@@ -1,6 +1,7 @@
-<?php 
+<?php
 namespace App\Services;
 
+use App\Enums\OrderStatus;
 use App\Repositories\Interface\CommentRepositoryInterface;
 use App\Repositories\Interface\NotificationRepositoryInterface;
 use App\Repositories\Interface\OfferRepositoryInterface;
@@ -20,7 +21,7 @@ class RestaurantService extends BaseService
     protected $notificationRepository;
     protected $commentRepository;
     protected $productRepository;
-    
+
 
     public function __construct(RestaurantRepositoryInterface $restaurantRepository ,
      OrderRepositoryInterface $orderRepository,
@@ -52,7 +53,7 @@ class RestaurantService extends BaseService
         }
 
         return ['token' => $token , 'restaurant' => $restaurant];
-  
+
     }
 
     public function login($data){
@@ -73,15 +74,15 @@ class RestaurantService extends BaseService
         return ['token' => $token , 'restaurant' => $restaurant];
 
     }
-    
+
     public function profile(){
         return auth()->user();
     }
 
     public function updateProfile($restaurant,$request){
-        
+
        if($request->has('image')){
-            $this->UploadImage($request,'image',$restaurant,'restaurants/images');     
+            $this->UploadImage($request,'image',$restaurant,'restaurants/images');
        }
 
        $restaurant = $this->restaurantRepository->update($request->except('image'),$restaurant->id);
@@ -120,7 +121,7 @@ class RestaurantService extends BaseService
 
         $restaurant=$this->profile();
 
-        return $this->orderRepository->orders($restaurant);
+        return $this->orderRepository->getOrders($restaurant);
 
     }
     public function getOffers(){
@@ -136,7 +137,6 @@ class RestaurantService extends BaseService
 
         return $this->commentRepository->all($restaurant);
 
-
     }
     public function notifications(){
 
@@ -144,27 +144,26 @@ class RestaurantService extends BaseService
 
         return $this->notificationRepository->all($restaurant);
 
-
     }
     public function newOrders(){
 
         $restaurant=$this->profile();
 
-        return $this->orderRepository->newOrders($restaurant);
+        return $this->orderRepository->getOrders($restaurant,OrderStatus::PENDING);
 
     }
     public function currentOrders(){
 
         $restaurant=$this->profile();
 
-        return $this->orderRepository->currentOrders($restaurant);
+        return $this->orderRepository->getOrders($restaurant,OrderStatus::RECEIVED);
 
     }
     public function previousOrders(){
 
         $restaurant=$this->profile();
 
-        return $this->orderRepository->previousOrders($restaurant);
+        return $this->orderRepository->getOrders($restaurant,[OrderStatus::DELIVERED,OrderStatus::REJECTED]);
 
     }
 

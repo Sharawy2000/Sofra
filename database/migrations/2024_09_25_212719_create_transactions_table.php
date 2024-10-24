@@ -10,12 +10,17 @@ class CreateTransactionsTable extends Migration {
 		Schema::create('transactions', function(Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
-			$table->integer('order_id')->unsigned();
-			$table->integer('payment_method_id')->unsigned();
-			$table->string('tranaction_id');
+			$table->integer('payment_id')->unsigned();
+			$table->integer('quantity')->unsigned();
+			$table->string('product_name');
+			$table->string('currency');
+			$table->string('payer_name');
+			$table->string('payer_email');
+			$table->string('payment_status');
+			$table->string('payment_method');
 			$table->decimal('amount');
-			$table->tinyInteger('status');
-			$table->timestamp('transaction_date');
+			// $table->tinyInteger('status');
+			// $table->timestamp('transaction_date');
 		});
 	}
 

@@ -22,7 +22,7 @@ class OfferController extends Controller
         $offers = $this->offerService->all();
 
         return $this->responseJson('العروض',$offers);
-        
+
     }
 
     /**
@@ -53,7 +53,7 @@ class OfferController extends Controller
         $offer=$this->offerService->get($id);
 
         return $this->responseJson('العرض',$offer);
-  
+
     }
 
     /**
@@ -82,6 +82,8 @@ class OfferController extends Controller
      */
     public function destroy(string $id)
     {
+        $this->offerService->removeImage($id);
+
         $this->offerService->delete($id);
 
         return $this->responseJson('تم حذف العرض');

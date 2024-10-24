@@ -17,7 +17,7 @@ class AuthController extends Controller
           $this->restaurantService = $restaurantService;
      }
     use Helper;
-    
+
     public function register(RegisterRequest $request){
 
           $data=$request->validated();
@@ -65,7 +65,7 @@ class AuthController extends Controller
                'name'=>'nullable|string',
                'phone'=>'nullable|string|unique:restaurants,phone,'.$restaurant->id,
                'email'=>'nullable|string|unique:restaurants,email,'.$restaurant->id,
-               'neighborhood_id'=>'nullable|inteager',
+               'neighborhood_id'=>'nullable|integer',
                'image'=>'nullable|file|mimes:jpg,jpeg,png,gif,svg,ico',
                'minimum_order'=>'nullable',
                'delivery_fees'=>'nullable',
@@ -84,7 +84,7 @@ class AuthController extends Controller
      }
 
      public function logout(){
-          
+
           $this->restaurantService->logout();
 
           return $this->responseJson('تم تسجيل الخروج بنجاح');

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\OrderStatus;
 use App\Repositories\Interface\ClientRepositoryInterface;
 use App\Repositories\Interface\CommentRepositoryInterface;
 use App\Repositories\Interface\NotificationRepositoryInterface;
@@ -96,7 +97,7 @@ class ClientService extends BaseService
 
         $client=$this->profile();
 
-        return $this->orderRepository->orders($client);
+        return $this->orderRepository->getOrders($client);
 
     }
 
@@ -110,24 +111,24 @@ class ClientService extends BaseService
 
         return $this->notificationRepository->all($client);
 
-
     }
     public function currentOrders(){
 
         $client=$this->profile();
 
-        return $this->orderRepository->orders($client);
+        return $this->orderRepository->getOrders($client,OrderStatus::ACCEPTED);
 
     }
     public function previousOrders(){
 
         $client=$this->profile();
 
-        return $this->orderRepository->previousOrders($client);
+        return $this->orderRepository->getOrders($client,[OrderStatus::CANCELLED,OrderStatus::DELIVERED]);
+
 
     }
 
-    public function review($request,$restaurant_id){
+    public function addReview($request,$restaurant_id){
 
         if($request->comment== null && $request->rate == null){
             return['errorReview'=>true];
@@ -147,9 +148,9 @@ class ClientService extends BaseService
 
         }
 
-        $request->merge(['restaurant_id'=>$restaurant->id]);
+        $request->merge(['restaurant_id'=>$restaurant->id,'client_id'=>$client->id]);
 
-        return $this->clientRepository->addReview($request->all(),$client);
+        return $this->commentRepository->store($request->all());
 
     }
 

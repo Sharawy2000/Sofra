@@ -5,7 +5,6 @@ interface RestaurantRepositoryInterface
 {
     public function validateLogin($data);
     public function createToken($restaurant);
-    public function currentToken($restaurant);
     public function removeToken($restaurant);
     public function overallRateCalc($restaurant);
     public function myComissionsCalc($restaurant);

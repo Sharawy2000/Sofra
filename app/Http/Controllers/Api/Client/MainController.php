@@ -26,7 +26,7 @@ class MainController extends Controller
         $offers = $this->clientService->allValidOffers();
 
         return $this->responseJson('جديد العروض',$offers);
-        
+
     }
     public function myNotifications(){
         $notifications = $this->clientService->notifications();
@@ -49,13 +49,13 @@ class MainController extends Controller
     }
 
     public function addReview(Request $request , $restaurant_id){
-        
+
         $request->validate([
             'comment'=>'nullable|string',
             'rate'=>'nullable|integer|in:1,2,3,4,5',
         ]);
 
-        $comment=$this->clientService->review($request,$restaurant_id);
+        $comment=$this->clientService->addReview($request,$restaurant_id);
 
         if(isset($comment['errorReview'])){
             return $this->responseJson('من فضلك قم بإضافة تعليق أو تقييم',null,400);

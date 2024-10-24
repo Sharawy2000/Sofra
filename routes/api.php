@@ -15,9 +15,12 @@ use App\Http\Controllers\Api\Client\{
     AuthController as ClientAuthController,
     MainController as ClientMainController,
 };
-
+use App\Http\Controllers\PayMobController;
 use Illuminate\Support\Facades\Route;
 
+//paymob -> success when in real server host
+
+Route::post('/checkout/processed',[PayMobController::class,'checkout_process']);
 
 Route::group([
     'prefix'=>'v1'
@@ -122,12 +125,15 @@ Route::group([
             Route::get('/{id}/delivered','deliveredOrder');
         });
 
+        
+       
     });
-
+        
     Route::name('api.')->group(function(){
         Route::resource('products',ProductsController::class)->middleware(['auth:sanctum','is-restaurant']);
         Route::resource('offers',OfferController::class)->middleware(['auth:sanctum','is-restaurant']);
         Route::resource('orders',OrderController::class)->middleware(['auth:sanctum','is-client']);
     });
-
+        
 });
+                

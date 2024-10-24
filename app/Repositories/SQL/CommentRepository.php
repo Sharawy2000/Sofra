@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Repositories\SQL;
 
 use App\Models\Comment;
@@ -16,7 +16,5 @@ class CommentRepository extends BaseRepository implements CommentRepositoryInter
     public function all($model){
         return $model->comments()->latest()->paginate(5);
     }
-
-    
 
 }

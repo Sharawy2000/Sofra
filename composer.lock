@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2a81f635799f5cbb4c33143d4c44f71",
+    "content-hash": "4ff5cb0ec5cafcb30ea4c87025cb935a",
     "packages": [
         {
             "name": "brick/math",
@@ -3176,6 +3176,44 @@
             "time": "2024-04-27T21:32:50+00:00"
         },
         {
+            "name": "samir-hussein/paymob",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samir-hussein/paymob.git",
+                "reference": "5e7b59aba9fa810076925da9a17e02373ae494a4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samir-hussein/paymob/zipball/5e7b59aba9fa810076925da9a17e02373ae494a4",
+                "reference": "5e7b59aba9fa810076925da9a17e02373ae494a4",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PayMob\\": "paymob/laravel",
+                    "Paymob\\": "paymob"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Samir Ebrahim Hussein",
+                    "email": "samirhussein274@gmail.com"
+                }
+            ],
+            "description": "paymob payment gateway",
+            "support": {
+                "issues": "https://github.com/samir-hussein/paymob/issues",
+                "source": "https://github.com/samir-hussein/paymob/tree/2.0"
+            },
+            "time": "2023-01-24T23:40:17+00:00"
+        },
+        {
             "name": "spatie/laravel-permission",
             "version": "6.9.0",
             "source": {
@@ -3256,6 +3294,72 @@
                 }
             ],
             "time": "2024-06-22T23:04:52+00:00"
+        },
+        {
+            "name": "srmklive/paypal",
+            "version": "3.0.32",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/srmklive/laravel-paypal.git",
+                "reference": "031d69d7c99f9ef0874a34cb85326ede28cd7aed"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/srmklive/laravel-paypal/zipball/031d69d7c99f9ef0874a34cb85326ede28cd7aed",
+                "reference": "031d69d7c99f9ef0874a34cb85326ede28cd7aed",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "guzzlehttp/guzzle": "~7.0",
+                "illuminate/support": "~6.0|~7.0|~8.0|~9.0|^10.0|^11.0",
+                "nesbot/carbon": "~2.0|^3.0",
+                "php": ">=7.2|^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^8.0|^9.0|^10.0|^11.0",
+                "symfony/var-dumper": "~5.0|^6.0|^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Srmklive\\PayPal\\Providers\\PayPalServiceProvider"
+                    ],
+                    "aliases": {
+                        "PayPal": "Srmklive\\PayPal\\Facades\\PayPal"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Srmklive\\PayPal\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raza Mehdi",
+                    "email": "srmk@outlook.com"
+                }
+            ],
+            "description": "Laravel plugin For Processing Payments Through Paypal Express Checkout. Can Be Used Independently With Other Applications.",
+            "keywords": [
+                "http",
+                "laravel paypal",
+                "paypal",
+                "rest",
+                "web service"
+            ],
+            "support": {
+                "issues": "https://github.com/srmklive/laravel-paypal/issues",
+                "source": "https://github.com/srmklive/laravel-paypal/tree/3.0.32"
+            },
+            "time": "2024-06-24T14:34:51+00:00"
         },
         {
             "name": "symfony/clock",

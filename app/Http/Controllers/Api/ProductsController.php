@@ -23,7 +23,7 @@ class ProductsController extends Controller
         $products = $this->productService->all();
 
         return $this->responseJson('المنتجات',$products);
-      
+
     }
 
     /**
@@ -54,7 +54,7 @@ class ProductsController extends Controller
         $product= $this->productService->get($id);
 
         return $this->responseJson('المنتج',$product);
-        
+
     }
 
     /**
@@ -70,7 +70,7 @@ class ProductsController extends Controller
             'order_duration'=>'nullable',
             'price_in_offer'=>'nullable',
        ]);
-       
+
        $product = $this->productService->updateProduct($request,$id);
 
        return $this->responseJson('تم تحديث المنتج',$product);
@@ -81,6 +81,8 @@ class ProductsController extends Controller
      */
     public function destroy(string $id)
     {
+        $this->productService->removeImage($id);
+
         $this->productService->delete($id);
 
         return $this->responseJson('تم حذف المنتج');

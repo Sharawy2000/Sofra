@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\IsRegistered;
+use App\Listeners\SendWelcomeEmail;
 use App\Repositories\Interface\{
     ContactRepositoryInterface,
     ClientRepositoryInterface,
@@ -21,7 +23,7 @@ use App\Repositories\SQL\{
     OfferRepository,
     OrderRepository,
     RestaurantRepository, RoleRepository, };
-
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -47,6 +49,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Event::listen(
+        //     IsRegistered::class,
+        //     SendWelcomeEmail::class,
+        // );
     }
 }

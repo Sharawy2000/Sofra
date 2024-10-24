@@ -1,7 +1,6 @@
-<?php 
+<?php
 namespace App\Repositories\SQL;
 
-use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Repositories\Interface\OrderRepositoryInterface;
 
@@ -12,35 +11,17 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
         parent::__construct($order);
         $this->order = $order;
     }
+    public function getOrders($model, $status = null)
+    {
+        $query = $model->orders()->latest();
 
-    public function attachProducts($order,$product,$data){
-        $order->products()->attach($product->id,$data);
-    }
+        if (is_array($status)) {
+            $query->whereIn('status', $status);
+        } elseif ($status !== null) {
+            $query->where('status', $status);
+        }
 
-    public function orders($model){
-        return $model->orders()->latest()->paginate(5);
-    }
-    public function newOrders($model){
-        return $model->orders()
-        ->where('status',OrderStatus::PENDING)
-        ->latest()
-        ->paginate(5);
-    }
-    public function currentOrders($model){
-        return $model->orders()
-        ->where('status',OrderStatus::ACCEPTED)
-        ->latest()
-        ->paginate(5);
-    }
-    public function previousOrders($model){
-        return $model->orders()
-        ->where(function($query){
-            $query->where('status',OrderStatus::DELIVERED)
-                  ->orWhere('status',OrderStatus::CANCELLED)
-                  ->orWhere('status',OrderStatus::REJECTED);
-        })
-        ->latest()
-        ->paginate(5);
+        return $query->paginate(5);
     }
     public function orderStatus($status,$order){
         $order->status = $status;

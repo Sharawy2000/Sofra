@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Services;
 
 use App\Repositories\Interface\OfferRepositoryInterface;
@@ -16,16 +16,16 @@ class OfferService extends BaseService
 
     public function restaurant(){
         $restaurant=auth()->user();
-        
+
         return $restaurant;
     }
 
     public function placeOffer($request,$isApi=true){
-        
+
         $restaurant=$this->restaurant();
 
         $request->merge(['restaurant_id' => $restaurant->id]);
-        
+
         $offer=$this->offerRepository->store($request->all());
 
         if($request->hasFile('image')){
@@ -47,11 +47,11 @@ class OfferService extends BaseService
 
     }
 
-    public function getfilterOffers($request){
+    public function getFilterOffers($request){
         if($request->search != null){
 
             return $this->offerRepository->filter($request->search);
-            
+
         }else{
 
             return $this->all();

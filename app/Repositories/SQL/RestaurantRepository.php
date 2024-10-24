@@ -24,11 +24,8 @@ class RestaurantRepository extends BaseRepository implements RestaurantRepositor
     public function createToken($restaurant){
         return $restaurant->createToken('Personal Access Token',['*'],now()->addMonth())->plainTextToken;
     }
-    public function currentToken($restaurant){
-        return $restaurant->currentAccessToken();
-    }
     public function removeToken($restaurant){
-        $this->currentToken($restaurant)->delete();
+        $restaurant->currentAccessToken()->delete();
     }
     public function overallRateCalc($restaurant){
         $rates=$restaurant->comments()->pluck('rate')->sum();

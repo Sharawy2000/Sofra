@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Repositories\SQL;
 
 use App\Models\Token;
@@ -6,9 +6,6 @@ use App\Repositories\Interface\TokenRepositoryInterface;
 
 class TokenRepository extends BaseRepository implements TokenRepositoryInterface
 {
-
-    protected $fcmToken;
-
     public function __construct(Token $fcmToken){
         parent::__construct($fcmToken);
     }
@@ -20,7 +17,5 @@ class TokenRepository extends BaseRepository implements TokenRepositoryInterface
         $module->fcmTokens()->delete();
         return $module->fcmTokens()->create($data);
     }
-    
-    
 
 }

@@ -1,7 +1,6 @@
 <?php
 namespace App\Repositories\SQL;
 
-use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Model;
 use App\Repositories\Interface\BaseRepositoryInterface;
 

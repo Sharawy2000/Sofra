@@ -29,7 +29,7 @@ class OfferController extends Controller
     public function create()
     {
         // return view('dashboard.offers.create');
-        
+
     }
 
     /**
@@ -37,7 +37,7 @@ class OfferController extends Controller
      */
     public function store(Request $request)
     {
-        
+
     }
 
     /**
@@ -69,6 +69,8 @@ class OfferController extends Controller
      */
     public function destroy(string $id)
     {
+        $this->offerService->removeImage($id);
+
         $this->offerService->delete($id);
 
         return back()->with('success','تم حذف العرض');

@@ -16,9 +16,9 @@ class RestaurantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $restaurants=$this->restaurantService->all();
+        $restaurants=$this->restaurantService->getFiltered($request->search);
 
         return view('dashboard.restaurants.index',get_defined_vars());
     }

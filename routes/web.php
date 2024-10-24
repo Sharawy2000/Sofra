@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Web\Dashboard\{
     CategoryController,
     CityController,
@@ -18,11 +19,26 @@ use App\Http\Controllers\Web\Dashboard\{
 };
 use App\Http\Controllers\Web\User\AuthController;
 use App\Http\Controllers\Web\User\MainController as UserMainController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PayPalController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// paypal
+Route::get('/cart',[PaypalController::class,'pay']);
+Route::post('/pay',[PaypalController::class,'pay_process'])->name('paypal');
+Route::get('/success',[PaypalController::class,'success'])->name('success');
+Route::get('/cancel',[PaypalController::class,'cancel'])->name('cancel');
+
+//paymob -> run in real server host
+Route::get('checkout/response',function(Request $request){
+    return $request->all();
+});
+
+Route::post('checkout/{id}', [CheckoutController::class,'index'])->name('checkout');
 
 Route::group([
     'prefix' =>'auth',

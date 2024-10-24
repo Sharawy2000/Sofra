@@ -21,14 +21,8 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
     public function createToken($client){
         return $client->createToken('Personal Access Token',['*'],now()->addMonth())->plainTextToken;
     }
-    public function currentToken($client){
-        return $client->currentAccessToken();
-    }
     public function removeToken($client){
-        $this->currentToken($client)->delete();
-    }
-    public function addReview($data,$client){
-        return $client->comments()->create($data);
+        $client->currentAccessToken()->delete();
     }
     public function removeAllTokens($id){
         $client=$this->find($id);

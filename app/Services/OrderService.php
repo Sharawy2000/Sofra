@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Enums\OrderStatus;
+use App\Http\Controllers\PayMobController;
 use App\Models\Client;
 use App\Repositories\Interface\ClientRepositoryInterface;
 use App\Repositories\Interface\TokenRepositoryInterface;
@@ -51,7 +52,7 @@ class OrderService extends BaseService
         $target = auth()->user();
 
         $this->orderRepository->orderStatus($status,$order);
-        
+
         if($target instanceof Client){
 
             $notification=[
@@ -59,19 +60,19 @@ class OrderService extends BaseService
                 'body'=>$order->client->name.' '.$order->status->name." ".'the order',
                 'is_seen'=> false
             ];
-    
+
             $restaurant=$this->restaurantRepository->find($order->restaurant_id);
-    
+
             $this->notificationRepository->add($notification,$restaurant);
-    
+
             $token = $this->fcmTokenRepository->get($restaurant);
-    
+
         }else{
 
             $notification=[
                 'title'=>$order->status->name == OrderStatus::DELIVERED->name ? "Order $order->id" : 'Order '.$order->id.' '.$order->status->name,
                 'body'=>$order->status->name == OrderStatus::DELIVERED->name ? 'Thank you for choosing our service, have a nice day :)' : $order->restaurant->name.' '.$order->status->name." ".'the order',
-                'is_seen'=> false
+                'is_seen'=> false,
             ];
 
             $client=$this->clientRepository->find($order->client_id);
@@ -89,7 +90,7 @@ class OrderService extends BaseService
             ];
             $this->notifyByFirebase($title,$body,$token,$orderID);
         }
-        
+
         return $order;
     }
 
@@ -141,7 +142,7 @@ class OrderService extends BaseService
         $order=$this->orderRepository->store($request->all());
 
         //  attachment process
-        
+
         foreach ($request->products as $index => $product_id) {
             $product=$this->productRepository->find($product_id);
             $quantity = $request->quantities[$index] ?? 1;
@@ -177,36 +178,40 @@ class OrderService extends BaseService
 
         }
 
+        // PayMobController::pay($total_price);
+
+
         return $order;
+
     }
     // method accept , reject , etc ,
     // logic pending  , method prv
 
     public function accept($id){
-        
+
         return $this->changeStatus($id,OrderStatus::PENDING,OrderStatus::ACCEPTED);
     }
     public function reject($id){
-        
+
         return $this->changeStatus($id,OrderStatus::PENDING,OrderStatus::REJECTED);
 
     }
     public function received($id){
-        
+
         return $this->changeStatus($id,OrderStatus::ACCEPTED,OrderStatus::RECEIVED);
 
     }
     public function cancelled($id){
-        
+
         return $this->changeStatus($id,OrderStatus::ACCEPTED,OrderStatus::CANCELLED);
 
     }
     public function delivered($id){
-        
+
         return $this->changeStatus($id,OrderStatus::RECEIVED,OrderStatus::DELIVERED);
 
     }
-    
+
     public function getFilteredOrders($search){
 
         if($search != null){

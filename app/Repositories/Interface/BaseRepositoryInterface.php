@@ -12,8 +12,4 @@ interface BaseRepositoryInterface
     public function detach($model,$relation);
     public function sync($model,$relation,$id);
 
-
-
-
-
 }
