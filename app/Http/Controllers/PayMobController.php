@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class PayMobController extends Controller
 {
+    //
     static public function pay($id,$total_price)
     {
         $auth = PayMob::AuthenticationRequest();

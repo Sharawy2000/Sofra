@@ -9,6 +9,7 @@ use Srmklive\PayPal\Services\PayPal;
 
 class PayPalController extends Controller
 {
+    //
     public function pay(){
         return view("index");
     }

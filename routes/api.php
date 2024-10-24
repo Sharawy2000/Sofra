@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/checkout/processed',[PayMobController::class,'checkout_process']);
 
+// ----------------------------------------------------------------
+
 Route::group([
     'prefix'=>'v1'
 ],function(){

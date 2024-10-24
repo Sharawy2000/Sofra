@@ -33,10 +33,14 @@ Route::post('/pay',[PaypalController::class,'pay_process'])->name('paypal');
 Route::get('/success',[PaypalController::class,'success'])->name('success');
 Route::get('/cancel',[PaypalController::class,'cancel'])->name('cancel');
 
+// ----------------------------------------------------------------
+
 //paymob -> run in real server host
 Route::get('checkout/response',function(Request $request){
     return $request->all();
 });
+
+// ----------------------------------------------------------------
 
 Route::post('checkout/{id}', [CheckoutController::class,'index'])->name('checkout');
 
